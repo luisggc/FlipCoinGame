@@ -43,7 +43,7 @@
             <div class="form-row" style="margin-top: 20px;">
                 <div class="form-group col-md-4">
                     <label for="probabilidade_cara">Probabilidade de sair cara</label>
-                    <input type="number" class="form-control" id="probabilidade_cara" onchange="jogo.probabilidade_cara=Number(document.getElementById('probabilidade_cara').value)">
+                    <input type="number" class="form-control" id="probabilidade_cara" onchange="atualizarJogo('probabilidade_cara',Number)">
                 </div>
                 <div class="form-group col-md-4">
                     <label for="probabilidade_coroa">Probabilidade de sair coroa</label>
@@ -51,43 +51,44 @@
                 </div>
                 <div class="form-group col-md-4">
                     <label for="lances">Quantidade de lances</label>
-                    <input type="number" class="form-control" id="lances" onchange="jogo.lances=Number(document.getElementById('lances').value)">
+                    <input type="number" class="form-control" id="lances" onchange="atualizarJogo('lances',Number)">
                 </div>
-
             </div>
 
-        </form>
-        <!-- #endregion -->
+    </div>
 
-        <!-- #region Resultado -->
-        <div class="resultado container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h2 id="label_jogador1">Cara</h2>
-                    <h4 id="acontecimentos"></h4>
-                    <center>
-                        <div class="odometer custom_odometer" id="label_saldo1"></div>
-                    </center>
-                </div>
-                <div class="col-md-4">
-                    <div class="coin-flip" onclick="rotacionar()">
-                        <div id="coroa" class="coin-tails">
-                            <img src="images/US_One_Cent_Rev.png">
-                        </div>
-                        <div id="cara" class="coin-heads">
-                            <img src="images/US_One_Cent_Obv.png">
-                        </div>
+    </form>
+    <!-- #endregion -->
+
+    <!-- #region Resultado -->
+    <div class="resultado container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2 id="label_jogador1">Cara</h2>
+                <h4 id="acontecimentos"></h4>
+                <center>
+                    <div class="odometer custom_odometer" id="label_saldo1"></div>
+                </center>
+            </div>
+            <div class="col-md-4">
+                <div class="coin-flip" onclick="rotacionar()">
+                    <div id="coroa" class="coin-tails">
+                        <img src="images/US_One_Cent_Rev.png">
+                    </div>
+                    <div id="cara" class="coin-heads">
+                        <img src="images/US_One_Cent_Obv.png">
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <h2 id="label_jogador2">Coroa</h2>
-                    <h4 id="nao_acontecimentos"></h4>
-                    <center>
-                        <div class="odometer custom_odometer" id="label_saldo2"></div>
-                    </center>
-                </div>
+            </div>
+            <div class="col-md-4">
+                <h2 id="label_jogador2">Coroa</h2>
+                <h4 id="nao_acontecimentos"></h4>
+                <center>
+                    <div class="odometer custom_odometer" id="label_saldo2"></div>
+                </center>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- #regionModal  -->
@@ -104,7 +105,7 @@
                 <div class="modal-body" style="margin-top: 20px;">
 
 
-                    Instruções: dois jogadores disputarão blabla bla.
+                    Instruções: dois jogadores disputarão, com probabilidades variáveis de se obter cara ou coroa. Caso o resultado seja cara pelo menos uma vez, o ganhador é quem escolheu cara. Caso todas as saídas sejam coroa, quem escolheu coroa é o vencedor.
 
                     <div class="linha"></div>
 
@@ -144,17 +145,17 @@
                     </div>
 
 
-                    <div class="linha"></div>
+                    <!--<div class="linha"></div>-->
 
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="ganho">Ganho (em porcentagem)</label>
+                            <label for="ganho">Ganho em % do saldo do adversário</label>
                             <input type="number" class="form-control" id="ganho">
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="perda">Perda (em porcentagem)</label>
+                            <label for="perda">Ganho em % do saldo do adversário</label>
                             <input type="number" class="form-control" id="perda">
                         </div>
                     </div>
@@ -177,13 +178,13 @@
             saldo1: 100,
             nome2: "Jack",
             saldo2: 100,
-            ganho: 60,
-            perda: 40,
+            ganho: 100,
+            perda: 1,
             acontecimentos: 0,
             nao_acontecimentos: 0,
-            lances: 1,
-            probabilidade_cara: 50,
-            probabilidade_coroa: 50,
+            lances: 1000,
+            probabilidade_cara: 1,
+            probabilidade_coroa: 99,
         }
 
         var el = document.querySelector('#label_saldo1');

@@ -42,8 +42,16 @@ function apostar() {
     var ganhador = (quantidade_acontecimentos_adicionais > 0) ? "1" : "2"
     var perdedor = ganhador == "2" ? "1" : "2"
 
-    jogo["saldo" + ganhador] = Math.floor(jogo["saldo" + ganhador] * (1 + jogo.ganho / 100))
-    jogo["saldo" + perdedor] = Math.floor(jogo["saldo" + perdedor] * (1 - jogo.perda / 100))
+    if (quantidade_acontecimentos_adicionais > 0) {
+        //Cara é o ganhador
+        jogo["saldo1"] = Math.floor(jogo["saldo1"] + jogo["saldo2"] * jogo.ganho / 100)
+        jogo["saldo2"] = Math.floor(jogo["saldo2"] * (1 - jogo.ganho / 100))
+    } else {
+        jogo["saldo2"] = Math.floor(jogo["saldo2"] + jogo["saldo1"] * jogo.perda / 100)
+        jogo["saldo1"] = Math.floor(jogo["saldo1"] * (1 - jogo.perda / 100))
+    }
+    /*jogo["saldo" + ganhador] = Math.floor(jogo["saldo" + ganhador] + Math.floor(jogo["saldo" + perdedor]*jogo.ganho / 100))
+    jogo["saldo" + perdedor] = Math.floor(jogo["saldo" + perdedor] * (1 - jogo.perda / 100))*/
 
     return quantidade_acontecimentos_adicionais
 }
@@ -83,7 +91,7 @@ function atualizarVisual() {
         "label_saldo1": jogo.saldo1,
         "label_saldo2": jogo.saldo2
     }
-
+    jogo.probabilidade_coroa = 100 - jogo.probabilidade_cara
 
     for (let id in jogo) {
         if (jogo.hasOwnProperty(id) && id != "inner") {
