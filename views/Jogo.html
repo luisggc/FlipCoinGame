@@ -1,0 +1,207 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Jogo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+-->
+    <script src="scripts/external/jquery-3.3.1.slim.min.js"></script>
+    <script src="scripts/external/popper.min.js"></script>
+
+    <script src="scripts/external/bootstrap.min.js"></script>
+
+    <script src="scripts/external/odometer.js"></script>
+    <script src="scripts/Jogo.js"></script>
+
+    <link rel="stylesheet" href="styles/odometer-theme-slot-machine.css" />
+    <link rel="stylesheet" href="styles/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/Jogo.css" />
+
+</head>
+
+<body>
+    <!-- #region Topo  -->
+    <div class="jogo-aposta">
+        <h1 style="margin-bottom: 10px">Aposte com a sorte</h1>
+
+        <!-- Botão para acionar modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#configuracoes" style="position:absolute;right:50px">
+            Configurações
+        </button>
+        <p>Clique na moeda para apostar</p>
+        <!-- #endregion -->
+
+        <!-- #region Input do jogo  -->
+        <form>
+            <div class="form-row" style="margin-top: 20px;">
+                <div class="form-group col-md-4">
+                    <label for="probabilidade_cara">Probabilidade de sair cara</label>
+                    <input type="number" class="form-control" id="probabilidade_cara" onchange="atualizarJogo('probabilidade_cara',Number)">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="probabilidade_coroa">Probabilidade de sair coroa</label>
+                    <input type="number" class="form-control" id="probabilidade_coroa" disabled>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="lances">Quantidade de lances</label>
+                    <input type="number" class="form-control" id="lances" onchange="atualizarJogo('lances',Number)">
+                </div>
+            </div>
+
+    </div>
+
+    </form>
+    <!-- #endregion -->
+
+    <!-- #region Resultado -->
+    <div class="resultado container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2 id="label_jogador1">Cara</h2>
+                <h4 id="acontecimentos"></h4>
+                <center>
+                    <div class="odometer custom_odometer" id="label_saldo1"></div>
+                </center>
+            </div>
+            <div class="col-md-4">
+                <div class="coin-flip" onclick="rotacionar()">
+                    <div id="coroa" class="coin-tails">
+                        <img src="images/US_One_Cent_Rev.png">
+                    </div>
+                    <div id="cara" class="coin-heads">
+                        <img src="images/US_One_Cent_Obv.png">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h2 id="label_jogador2">Coroa</h2>
+                <h4 id="nao_acontecimentos"></h4>
+                <center>
+                    <div class="odometer custom_odometer" id="label_saldo2"></div>
+                </center>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- #regionModal  -->
+    <div class="modal fade" id="configuracoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Configurações</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body" style="margin-top: 20px;">
+
+
+                    Instruções: dois jogadores disputarão, com probabilidades variáveis de se obter cara ou coroa. Caso o resultado seja cara pelo menos uma vez, o ganhador é quem escolheu cara. Caso todas as saídas sejam coroa, quem escolheu coroa é o vencedor.
+
+                    <div class="linha"></div>
+
+                    Jogador que escolheu:
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="jogador1">Cara</label>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="jogador2">Coroa</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="nome1">Nome</label>
+                            <input type="text" class="form-control" id="nome1">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="nome2">Nome</label>
+                            <input type="text" class="form-control" id="nome2">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="saldo1">Saldo</label>
+                            <input type="number" class="form-control" id="saldo1">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="saldo2">Saldo</label>
+                            <input type="number" class="form-control" id="saldo2">
+                        </div>
+                    </div>
+
+
+                    <!--<div class="linha"></div>-->
+
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="ganho">Ganho em % do saldo do adversário</label>
+                            <input type="number" class="form-control" id="ganho">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="perda">Ganho em % do saldo do adversário</label>
+                            <input type="number" class="form-control" id="perda">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="salvarConfig()">Salvar mudanças</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+
+    <script>
+        $('#configuracoes').modal('show')
+
+        var jogo = {
+            nome1: "Black",
+            saldo1: 100,
+            nome2: "Jack",
+            saldo2: 100,
+            ganho: 100,
+            perda: 1,
+            acontecimentos: 0,
+            nao_acontecimentos: 0,
+            lances: 1000,
+            probabilidade_cara: 1,
+            probabilidade_coroa: 99,
+        }
+
+        var el = document.querySelector('#label_saldo1');
+        od = new Odometer({
+            el: el,
+            format: 'dddd'
+        });
+
+        var el = document.querySelector('#label_saldo2');
+        od = new Odometer({
+            el: el,
+            format: 'dddd'
+        });
+
+        atualizarVisual()
+    </script>
+
+</body>
+
+</html>
