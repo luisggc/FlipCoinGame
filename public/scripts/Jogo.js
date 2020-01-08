@@ -49,7 +49,7 @@ function apostar() {
     //jogo.acontecimentos += quantidade_acontecimentos_adicionais
     //jogo.nao_acontecimentos += quantidade_nao_acontecimentos_adicionais
 
-    jogo.acontecimentos_nao_acontecimentos = quantidade_acontecimentos_adicionais + " caras / " + quantidade_nao_acontecimentos_adicionais + " coroas"
+    jogo.acontecimentos_nao_acontecimentos = quantidade_acontecimentos_adicionais-1 + " caras / " + quantidade_nao_acontecimentos_adicionais + " coroas"
 
     ultimo_saldo = Math.floor(y[y.length - 1])
     
