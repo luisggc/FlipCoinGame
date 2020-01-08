@@ -6,7 +6,8 @@ if (isChrome !== true) {
 function rotacionar() {
     var cara = document.getElementById('cara')
     var coroa = document.getElementById('coroa')
-    var caiu_cara = apostar() > 0
+    quantidade_de_eventos_adicionais = apostar()
+    var caiu_cara = quantidade_de_eventos_adicionais > 0
 
     cara.className = 'coin-heads rotation visible'
     coroa.classList = 'coin-tails rotation visible'
@@ -28,37 +29,58 @@ function apostar() {
     var quantidade_acontecimentos_adicionais = 0
     var quantidade_nao_acontecimentos_adicionais = 0
 
-    for (var i = 0; i < jogo.lances; i++) {
-        random = Math.random()
+    x = nj.arange(0, jogo.lances + 1).tolist()
+    randoms = nj.random([1, jogo.lances + 1]).tolist()[0]
+    y = [jogo.saldo1]
+    i = 0
+    for (random of randoms) {
+        i++
         if (random <= jogo.probabilidade_cara / 100) {
             quantidade_acontecimentos_adicionais++
+            // ganhador
+            y.push(y[i - 1] * (1 + jogo.ganho / 100))
+
         } else {
             quantidade_nao_acontecimentos_adicionais++
+            y.push(y[i - 1] * (1 - jogo.perda / 100))
         }
     }
-    jogo.acontecimentos += quantidade_acontecimentos_adicionais
-    jogo.nao_acontecimentos += quantidade_nao_acontecimentos_adicionais
 
-    var ganhador = (quantidade_acontecimentos_adicionais > 0) ? "1" : "2"
-    var perdedor = ganhador == "2" ? "1" : "2"
+    //jogo.acontecimentos += quantidade_acontecimentos_adicionais
+    //jogo.nao_acontecimentos += quantidade_nao_acontecimentos_adicionais
 
-    if (quantidade_acontecimentos_adicionais > 0) {
-        //Cara é o ganhador
-        jogo["saldo1"] = Math.floor(jogo["saldo1"] + jogo["saldo2"] * jogo.ganho / 100)
-        jogo["saldo2"] = Math.floor(jogo["saldo2"] * (1 - jogo.ganho / 100))
-    } else {
-        jogo["saldo2"] = Math.floor(jogo["saldo2"] + jogo["saldo1"] * jogo.perda / 100)
-        jogo["saldo1"] = Math.floor(jogo["saldo1"] * (1 - jogo.perda / 100))
+    jogo.acontecimentos_nao_acontecimentos = quantidade_acontecimentos_adicionais + " caras / " + quantidade_nao_acontecimentos_adicionais + " coroas"
+
+    ultimo_saldo = Math.floor(y[y.length - 1])
+    jogo["saldo1"] = ultimo_saldo
+    console.log(jogo["saldo1"])
+
+    if (ultimo_saldo > 100000000000) {
+        alert("O saldo final é maior que 100 bilhões, portanto pode haver há adaptação do visual\nValor final foi cerca de: " + Math.floor(ultimo_saldo / 1000000000) + " bilhões")
     }
-    /*jogo["saldo" + ganhador] = Math.floor(jogo["saldo" + ganhador] + Math.floor(jogo["saldo" + perdedor]*jogo.ganho / 100))
-    jogo["saldo" + perdedor] = Math.floor(jogo["saldo" + perdedor] * (1 - jogo.perda / 100))*/
+    updateGraph(x, y)
+
 
     return quantidade_acontecimentos_adicionais
 }
 
+function updateGraph(x, y) {
+    myChart.data = {
+        labels: x,
+        datasets: [{
+            label: 'Saldo',
+            data: y,
+            borderWidth: 1,
+            pointRadius: 0,
+            borderColor: "#fc0",
+            backgroundColor: "#ffea99"
+        }]
+    }
+    myChart.update()
+}
+
 function limpar() {
-    jogo.acontecimentos = 0
-    jogo.nao_acontecimentos = 0
+    jogo.acontecimentos_nao_acontecimentos = ""
     atualizarVisual()
 }
 
@@ -67,8 +89,6 @@ function salvarConfig() {
         ...jogo,
         nome1: document.getElementById("nome1").value,
         saldo1: Number(document.getElementById("saldo1").value),
-        nome2: document.getElementById("nome2").value,
-        saldo2: Number(document.getElementById("saldo2").value),
         ganho: Number(document.getElementById("ganho").value),
         perda: Number(document.getElementById("perda").value)
     }
@@ -84,23 +104,31 @@ function atualizarJogo(id, modify = function(value) { return value }) {
 function atualizarVisual() {
     console.log(jogo)
     jogo.inner = {
-        "label_jogador1": "Cara (" + jogo.nome1 + ")",
-        "label_jogador2": "Coroa (" + jogo.nome2 + ")",
-        "acontecimentos": jogo.acontecimentos,
-        "nao_acontecimentos": jogo.nao_acontecimentos,
-        "label_saldo1": jogo.saldo1,
-        "label_saldo2": jogo.saldo2
+        //"label_jogador1": "Cara (" + jogo.nome1 + ")",
+        "acontecimentos_nao_acontecimentos": jogo.acontecimentos_nao_acontecimentos,
+        "label_saldo1": jogo.saldo1 // > 100000000000 ? 100000000000 : jogo.saldo1
     }
+
     jogo.probabilidade_coroa = 100 - jogo.probabilidade_cara
 
     for (let id in jogo) {
         if (jogo.hasOwnProperty(id) && id != "inner") {
+            console.log(id)
             document.getElementById(id).value = jogo[id]
         }
     }
     for (let id in jogo.inner) {
         if (jogo.inner.hasOwnProperty(id)) {
+            console.log(id)
             document.getElementById(id).innerHTML = jogo.inner[id]
         }
     }
+}
+
+function saldo_para_100() {
+    jogo = {
+        ...jogo,
+        saldo1: 100
+    }
+    atualizarVisual()
 }

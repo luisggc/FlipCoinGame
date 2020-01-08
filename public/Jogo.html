@@ -17,10 +17,17 @@
     <script src="scripts/external/popper.min.js"></script>
     <script src="scripts/external/bootstrap.min.js"></script>
     <script src="scripts/external/odometer.js"></script>
+    <script src="scripts/external/Chart.bundle.min.js"></script>
+    <script src="scripts/external/Chart.min.js"></script>
+    <script src="scripts/external/numjs.min.js"></script>
+
     <script src="scripts/Jogo.js"></script>
 
-    <link rel="stylesheet" href="styles/odometer-theme-slot-machine.css" />
-    <link rel="stylesheet" href="styles/bootstrap.min.css">
+    <!--<link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet">-->
+    <link rel="stylesheet" href="styles/external/odometer-theme-slot-machine.css" />
+    <link rel="stylesheet" href="styles/external/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/external/Chart.min.css">
+
     <link rel="stylesheet" href="styles/Jogo.css" />
 
 </head>
@@ -28,7 +35,6 @@
 <body>
     <!-- #region Topo  -->
     <div class="jogo-aposta">
-        
         <h1 style="margin-bottom: 10px">Aposte com a sorte</h1>
 
         <div id="chamada">
@@ -68,14 +74,8 @@
     <!-- #region Resultado -->
     <div class="resultado container">
         <div class="row">
-            <div class="col-md-4">
-                <h2 id="label_jogador1">Cara</h2>
-                <h4 id="acontecimentos"></h4>
-                <center>
-                    <div class="odometer custom_odometer" id="label_saldo1"></div>
-                </center>
-            </div>
-            <div class="col-md-4">
+
+            <div class="col-md-6">
                 <div class="coin-flip" onclick="rotacionar()">
                     <div id="coroa" class="coin-tails">
                         <img src="images/US_One_Cent_Rev.png">
@@ -85,16 +85,27 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <h2 id="label_jogador2">Coroa</h2>
-                <h4 id="nao_acontecimentos"></h4>
+            <div class="col-md-6">
+                <h2 id="label_jogador1">Saldo</h2>
                 <center>
-                    <div class="odometer custom_odometer" id="label_saldo2"></div>
+                    <div class="odometer custom_odometer" id="label_saldo1"></div>
+                </center>
+                <center>
+                    <a href="#" onclick="saldo_para_100()" style="color:#fff;font-size:10px">Voltar saldo para 100</a>
                 </center>
             </div>
+
         </div>
     </div>
     </div>
+
+    <div style="background-color:white">
+        <canvas id="myChart" width="100%" height="50px" style="background-color:transparent; margin-bottom:20px;"></canvas>
+    </div>
+
+    <center>
+    <h4 id="acontecimentos_nao_acontecimentos"></h4>
+    </center>
 
     <!-- #regionModal  -->
     <div class="modal fade" id="configuracoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -107,57 +118,32 @@
                     </button>
                 </div>
 
-                <div class="modal-body" style="margin-top: 20px;">
+                <div class="modal-body" style="margin-top: 10px;">
                     Instruções: dois jogadores disputarão, com probabilidades variáveis de se obter cara ou coroa. Caso o resultado seja cara pelo menos uma vez, o ganhador é quem escolheu cara. Caso todas as saídas sejam coroa, quem escolheu coroa é o vencedor.
                     <div class="linha"></div>
 
-                    Jogador que escolheu:
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="jogador1">Cara</label>
-                        </div>
+                    Jogador que escolheu cara:
 
-                        <div class="form-group col-md-6">
-                            <label for="jogador2">Coroa</label>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
+                    <div class="form-row" style="margin-top:20px">
                         <div class="form-group col-md-6">
                             <label for="nome1">Nome</label>
                             <input type="text" class="form-control" id="nome1">
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="nome2">Nome</label>
-                            <input type="text" class="form-control" id="nome2">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
                             <label for="saldo1">Saldo</label>
                             <input type="number" class="form-control" id="saldo1">
                         </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="saldo2">Saldo</label>
-                            <input type="number" class="form-control" id="saldo2">
-                        </div>
                     </div>
-
-
-                    <!--<div class="linha"></div>-->
-
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="ganho">Ganho em % do saldo do adversário</label>
+                            <label for="ganho">Ganho em % (quando o resultado é cara)</label>
                             <input type="number" class="form-control" id="ganho">
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="perda">Ganho em % do saldo do adversário</label>
+                            <label for="perda">Perda em % (quando o resultado é coroa)</label>
                             <input type="number" class="form-control" id="perda">
                         </div>
                     </div>
@@ -172,36 +158,51 @@
     </div>
     <!-- #endregion -->
 
+
+
+
     <script>
         $('#configuracoes').modal('show')
 
         var jogo = {
             nome1: "Black",
             saldo1: 100,
-            nome2: "Jack",
-            saldo2: 100,
-            ganho: 100,
-            perda: 1,
-            acontecimentos: 0,
-            nao_acontecimentos: 0,
-            lances: 1000,
-            probabilidade_cara: 1,
-            probabilidade_coroa: 99,
+            ganho: 60,
+            perda: 40,
+            acontecimentos_nao_acontecimentos: "",
+            lances: 100,
+            probabilidade_cara: 48,
+            probabilidade_coroa: 52,
         }
 
         var el = document.querySelector('#label_saldo1');
         od = new Odometer({
             el: el,
-            format: 'dddd'
-        });
-
-        var el = document.querySelector('#label_saldo2');
-        od = new Odometer({
-            el: el,
-            format: 'dddd'
+            format: '(,ddd).dd',
+            duration: 1000
         });
 
         atualizarVisual()
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+
+
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            options: {
+                title: {
+                    display: true,
+                    text: "Saldo ao longo dos lances"
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
     </script>
 
 </body>
