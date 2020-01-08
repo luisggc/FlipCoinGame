@@ -57,7 +57,7 @@ function apostar() {
     if (ultimo_saldo > 100000000000) {
         n = Math.floor(ultimo_saldo / 1000000000)
         alert("O saldo final é maior que 100 bilhões, portanto pode haver há adaptação do visual\nValor final foi cerca de: " + n + " bilhões")
-        ultimo_saldo = n < 10000000000 ? 10000000000 : n
+        ultimo_saldo = 99999999
     }
     jogo["saldo1"] = ultimo_saldo
     console.log(jogo["saldo1"])
