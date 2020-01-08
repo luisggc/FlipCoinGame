@@ -52,12 +52,15 @@ function apostar() {
     jogo.acontecimentos_nao_acontecimentos = quantidade_acontecimentos_adicionais + " caras / " + quantidade_nao_acontecimentos_adicionais + " coroas"
 
     ultimo_saldo = Math.floor(y[y.length - 1])
-    jogo["saldo1"] = ultimo_saldo
-    console.log(jogo["saldo1"])
+    
 
     if (ultimo_saldo > 100000000000) {
-        alert("O saldo final é maior que 100 bilhões, portanto pode haver há adaptação do visual\nValor final foi cerca de: " + Math.floor(ultimo_saldo / 1000000000) + " bilhões")
+        n = Math.floor(ultimo_saldo / 1000000000)
+        alert("O saldo final é maior que 100 bilhões, portanto pode haver há adaptação do visual\nValor final foi cerca de: " + n + " bilhões")
+        ultimo_saldo = n < 10000000000 ? 10000000000 : n
     }
+    jogo["saldo1"] = ultimo_saldo
+    console.log(jogo["saldo1"])
     updateGraph(x, y)
 
 
@@ -87,7 +90,7 @@ function limpar() {
 function salvarConfig() {
     jogo = {
         ...jogo,
-        nome1: document.getElementById("nome1").value,
+        //nome1: document.getElementById("nome1").value,
         saldo1: Number(document.getElementById("saldo1").value),
         ganho: Number(document.getElementById("ganho").value),
         perda: Number(document.getElementById("perda").value)

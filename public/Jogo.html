@@ -35,14 +35,14 @@
 <body>
     <!-- #region Topo  -->
     <div class="jogo-aposta">
-        <h1 style="margin-bottom: 10px">Aposte com a sorte</h1>
+        <h1 style="margin-bottom: 10px">Clique na moeda para lucrar !!</h1>
 
         <div id="chamada">
             <!-- Botão para acionar modal -->
             <div>
-                <p>Clique na moeda para apostar</p>
+                <p></p>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#configuracoes">
+            <button type="button" class="btn btn-primary botao" data-toggle="modal" data-target="#configuracoes">
                 Configurações
             </button>
 
@@ -125,10 +125,10 @@
                     Jogador que escolheu cara:
 
                     <div class="form-row" style="margin-top:20px">
-                        <div class="form-group col-md-6">
+                       <!-- <div class="form-group col-md-6">
                             <label for="nome1">Nome</label>
                             <input type="text" class="form-control" id="nome1">
-                        </div>
+                        </div> -->
 
                         <div class="form-group col-md-6">
                             <label for="saldo1">Saldo</label>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-primary" onclick="salvarConfig()">Salvar mudanças</button>
+                    <button type="button" class="btn btn-primary botao" onclick="salvarConfig()">Salvar mudanças</button>
                 </div>
             </div>
         </div>
@@ -165,7 +165,6 @@
         $('#configuracoes').modal('show')
 
         var jogo = {
-            nome1: "Black",
             saldo1: 100,
             ganho: 60,
             perda: 40,

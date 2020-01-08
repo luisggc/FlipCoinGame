@@ -139,3 +139,7 @@ h1,
     align-content: space-between;
     flex-wrap: wrap;
 }
+.botao{
+    border-color: #fc0;
+    background-color: #fc0;
+}
