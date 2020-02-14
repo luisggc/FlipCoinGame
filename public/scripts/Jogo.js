@@ -64,7 +64,7 @@ function apostar() {
         return ultimo_saldo
     })
     if(Math.max.apply(null, ultimo_saldos)==999999){
-        alert("O saldo final de um dos jogadore é maior que 1 milhão, portanto pode haver adaptação do visual\nValor final foi cerca de: " + n + " bilhões")
+        alert("O saldo final de um dos jogadore é maior que 1 milhão, portanto pode haver adaptação do visual\nValor final foi cerca de: " + n + " milhões")
     }
     jogo["saldo_geral"] = ultimo_saldos
     updateGraph(x, y_array)
