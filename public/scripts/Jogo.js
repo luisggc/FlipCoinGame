@@ -52,7 +52,7 @@ function apostar() {
         return y
     })
 
-    jogo.acontecimentos_nao_acontecimentos = quantidade_acontecimentos_adicionais + " caras / " + quantidade_nao_acontecimentos_adicionais + " coroas"
+    jogo.acontecimentos_nao_acontecimentos = quantidade_acontecimentos_adicionais-1 + " caras / " + quantidade_nao_acontecimentos_adicionais + " coroas"
 
     ultimo_saldos = nome_jogadores.map((jogador, index) => {
         y_unique = y_array[index]
