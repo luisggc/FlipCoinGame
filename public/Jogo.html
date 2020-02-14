@@ -86,12 +86,12 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <h2 id="label_jogador1">Saldo</h2>
-                <center>
-                    <div class="odometer custom_odometer" id="label_saldo1"></div>
+                <h2 id="label_jogador1" class="visible">Saldo</h2>
+                <center id="visual_elemento_do_saldo">
+                    <div class="odometer custom_odometer">1</div>
                 </center>
                 <center>
-                    <a href="#" onclick="saldo_para_100()" style="color:#fff;font-size:10px">Voltar saldo para 100</a>
+                    <a href="#" onclick="saldo_para_100()" style="color:#fff;font-size:10px">Voltar todos os saldos para 100</a>
                 </center>
             </div>
 
@@ -104,7 +104,7 @@
     </div>
 
     <center>
-    <h4 id="acontecimentos_nao_acontecimentos"></h4>
+        <h4 id="acontecimentos_nao_acontecimentos"></h4>
     </center>
 
     <!-- #regionModal  -->
@@ -119,13 +119,13 @@
                 </div>
 
                 <div class="modal-body" style="margin-top: 10px;">
-                    Instruções: dois jogadores disputarão, com probabilidades variáveis de se obter cara ou coroa. Caso o resultado seja cara pelo menos uma vez, o ganhador é quem escolheu cara. Caso todas as saídas sejam coroa, quem escolheu coroa é o vencedor.
+                    <!-- Instruções: dois jogadores disputarão, com probabilidades variáveis de se obter cara ou coroa. Caso o resultado seja cara pelo menos uma vez, o ganhador é quem escolheu cara. Caso todas as saídas sejam coroa, quem escolheu coroa é o vencedor. -->
                     <div class="linha"></div>
 
                     Jogador que escolheu cara:
 
                     <div class="form-row" style="margin-top:20px">
-                       <!-- <div class="form-group col-md-6">
+                        <!-- <div class="form-group col-md-6">
                             <label for="nome1">Nome</label>
                             <input type="text" class="form-control" id="nome1">
                         </div> -->
@@ -133,6 +133,10 @@
                         <div class="form-group col-md-6">
                             <label for="saldo1">Saldo</label>
                             <input type="number" class="form-control" id="saldo1">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="quantidade_de_jogadores">Quantidade de jogadores</label>
+                            <input type="number" class="form-control" min="1" max="6" id="quantidade_de_jogadores">
                         </div>
                     </div>
 
@@ -165,21 +169,29 @@
         $('#configuracoes').modal('show')
 
         var jogo = {
-            saldo1: 100,
+            saldo_geral: [100],
             ganho: 60,
             perda: 40,
             acontecimentos_nao_acontecimentos: "",
             lances: 100,
             probabilidade_cara: 48,
             probabilidade_coroa: 52,
+            quantidade_de_jogadores: 1,
+            saldo1: 100
         }
+/*
 
-        var el = document.querySelector('#label_saldo1');
+        var el = document.querySelector('.odometer');
         od = new Odometer({
             el: el,
             format: '(,ddd).dd',
             duration: 1000
         });
+        window.odometerOptions = {
+            format: '(,ddd).dd',
+            duration: 1000
+        };
+        */
 
         atualizarVisual()
 

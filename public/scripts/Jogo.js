@@ -30,54 +30,69 @@ function apostar() {
     var quantidade_nao_acontecimentos_adicionais = 0
 
     x = nj.arange(0, jogo.lances + 1).tolist()
-    randoms = nj.random([1, jogo.lances + 1]).tolist()[0]
-    y = [jogo.saldo1]
-    i = 0
-    for (random of randoms) {
-        i++
-        if (random <= jogo.probabilidade_cara / 100) {
-            quantidade_acontecimentos_adicionais++
-            // ganhador
-            y.push(y[i - 1] * (1 + jogo.ganho / 100))
 
-        } else {
-            quantidade_nao_acontecimentos_adicionais++
-            y.push(y[i - 1] * (1 - jogo.perda / 100))
+    nome_jogadores = nj.arange(1, jogo.quantidade_de_jogadores + 1).tolist()
+
+    y_array = nome_jogadores.map((jogador, index) => {
+        y = [jogo.saldo_geral[index]]
+        i = 0
+        randoms = nj.random([1, jogo.lances + 1]).tolist()[0]
+        for (random of randoms) {
+            i++
+            if (random <= jogo.probabilidade_cara / 100) {
+                quantidade_acontecimentos_adicionais++
+                // ganhador
+                y.push(y[i - 1] * (1 + jogo.ganho / 100))
+
+            } else {
+                quantidade_nao_acontecimentos_adicionais++
+                y.push(y[i - 1] * (1 - jogo.perda / 100))
+            }
         }
-    }
-
-    //jogo.acontecimentos += quantidade_acontecimentos_adicionais
-    //jogo.nao_acontecimentos += quantidade_nao_acontecimentos_adicionais
+        return y
+    })
 
     jogo.acontecimentos_nao_acontecimentos = quantidade_acontecimentos_adicionais + " caras / " + quantidade_nao_acontecimentos_adicionais + " coroas"
 
-    ultimo_saldo = Math.floor(y[y.length - 1])
-    
-
-    if (ultimo_saldo > 100000000000) {
-        n = Math.floor(ultimo_saldo / 1000000000)
-        alert("O saldo final é maior que 100 bilhões, portanto pode haver há adaptação do visual\nValor final foi cerca de: " + n + " bilhões")
-        ultimo_saldo = n < 10000000000 ? 10000000000 : n
+    ultimo_saldos = nome_jogadores.map((jogador, index) => {
+        y_unique = y_array[index]
+        ultimo_saldo = Math.floor(y_unique[y_unique.length - 1])
+        if (ultimo_saldo > 1000000) {
+            n = Math.floor(ultimo_saldo / 1000000)
+            ultimo_saldo = 999999
+        }
+        return ultimo_saldo
+    })
+    if(Math.max.apply(null, ultimo_saldos)==999999){
+        alert("O saldo final de um dos jogadore é maior que 1 milhão, portanto pode haver adaptação do visual\nValor final foi cerca de: " + n + " bilhões")
     }
-    jogo["saldo1"] = ultimo_saldo
-    console.log(jogo["saldo1"])
-    updateGraph(x, y)
-
+    jogo["saldo_geral"] = ultimo_saldos
+    updateGraph(x, y_array)
 
     return quantidade_acontecimentos_adicionais
 }
 
-function updateGraph(x, y) {
+color_border = [
+    "#FFCC00",
+    "#0009B3",
+    "#B38F00",
+    "#7f84d9",
+    "#b30009",
+    "#09b300",
+]
+
+function updateGraph(x, y_array) {
     myChart.data = {
         labels: x,
-        datasets: [{
-            label: 'Saldo',
-            data: y,
-            borderWidth: 1,
-            pointRadius: 0,
-            borderColor: "#fc0",
-            backgroundColor: "#ffea99"
-        }]
+        datasets: y_array.map((y_value, index) =>
+            ({
+                label: 'Saldo do jogador ' + (index + 1),
+                data: y_value,
+                borderWidth: 1,
+                pointRadius: 0,
+                borderColor: color_border[index],
+                backgroundColor: jogo.quantidade_de_jogadores == 1 ? "#ffea99" : "transparent"
+            }))
     }
     myChart.update()
 }
@@ -88,12 +103,18 @@ function limpar() {
 }
 
 function salvarConfig() {
+    quantidade_de_jogadores = Number(document.getElementById("quantidade_de_jogadores").value)
+    if (quantidade_de_jogadores<1 || quantidade_de_jogadores>6){
+        alert("Selecione no máximo 6 jogadores.")
+        return
+    }
     jogo = {
         ...jogo,
-        //nome1: document.getElementById("nome1").value,
-        saldo1: Number(document.getElementById("saldo1").value),
+        quantidade_de_jogadores: quantidade_de_jogadores,
+        saldo1: [Number(document.getElementById("saldo1").value)],
         ganho: Number(document.getElementById("ganho").value),
-        perda: Number(document.getElementById("perda").value)
+        perda: Number(document.getElementById("perda").value),
+        saldo_geral: new Array(Number(document.getElementById("quantidade_de_jogadores").value)).fill(Number(document.getElementById("saldo1").value))
     }
     atualizarVisual()
 }
@@ -107,15 +128,29 @@ function atualizarJogo(id, modify = function(value) { return value }) {
 function atualizarVisual() {
     console.log(jogo)
     jogo.inner = {
-        //"label_jogador1": "Cara (" + jogo.nome1 + ")",
-        "acontecimentos_nao_acontecimentos": jogo.acontecimentos_nao_acontecimentos,
-        "label_saldo1": jogo.saldo1 // > 100000000000 ? 100000000000 : jogo.saldo1
+        "acontecimentos_nao_acontecimentos": jogo.acontecimentos_nao_acontecimentos
     }
-
     jogo.probabilidade_coroa = 100 - jogo.probabilidade_cara
 
+    visual_elemento_do_saldo = document.getElementById("visual_elemento_do_saldo")
+    
+    visual_elemento_do_saldo.innerHTML = jogo["saldo_geral"].map((saldo, index) => (
+        `${index+1}.<div class="odometer custom_odometer" id="saldo_do_jogador${index}">${saldo}</div><br>`
+    )).join("\n")
+        
+
+    jogo["saldo_geral"].map((saldo, index) => {
+        var el = document.getElementById(`saldo_do_jogador${index}`);
+        var new_odo = new Odometer({
+            el: el
+        });
+        $(`#saldo_do_jogador${index}`).html(saldo)
+    })
+
+    //document.getElementById("saldo1").value = jogo.saldo_geral[0]
+    
     for (let id in jogo) {
-        if (jogo.hasOwnProperty(id) && id != "inner") {
+        if (jogo.hasOwnProperty(id) && id != "inner" && id!='saldo_geral') {
             console.log(id)
             document.getElementById(id).value = jogo[id]
         }
@@ -128,9 +163,20 @@ function atualizarVisual() {
     }
 }
 
+function saldo_visivel(is_visible) {
+    var saldo_visual = document.getElementById('label_jogador1')
+    if (is_visible) {
+        saldo_visual.className = 'visible'
+    } else {
+        saldo_visual.className = 'hide'
+            //coroa.classList = 'coin-tails visible'
+    }
+}
+
 function saldo_para_100() {
     jogo = {
         ...jogo,
+        saldo_geral: jogo.saldo_geral.map(_ => 100),
         saldo1: 100
     }
     atualizarVisual()
