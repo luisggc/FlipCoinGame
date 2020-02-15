@@ -100,12 +100,16 @@
     </div>
 
     <div style="background-color:white">
-        <canvas id="myChart" width="100%" height="50px" style="background-color:transparent; margin-bottom:20px;"></canvas>
+        <canvas id="myChart" width="100%" height="100px" style="background-color:transparent; margin-bottom:20px;"></canvas>
     </div>
 
     <center>
         <h4 id="acontecimentos_nao_acontecimentos"></h4>
+        <div id="saldo_raw_texto" style="background-color: #000">
+        </div>
     </center>
+
+
 
     <!-- #regionModal  -->
     <div class="modal fade" id="configuracoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -131,7 +135,7 @@
                         </div> -->
 
                         <div class="form-group col-md-6">
-                            <label for="saldo1">Saldo</label>
+                            <label id="saldo_texto" for="saldo1">Saldo</label>
                             <input type="number" class="form-control" id="saldo1">
                         </div>
                         <div class="form-group col-md-6">
