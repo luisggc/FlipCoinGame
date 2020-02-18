@@ -175,12 +175,12 @@
 
         var jogo = {
                 saldo_geral: [100],
-                ganho: 60,
+                ganho: 50,
                 perda: 40,
                 acontecimentos_nao_acontecimentos: "",
                 lances: 100,
-                probabilidade_cara: 48,
-                probabilidade_coroa: 52,
+                probabilidade_cara: 50,
+                probabilidade_coroa: 50,
                 quantidade_de_jogadores: 1,
                 saldo1: 100
             }
@@ -217,6 +217,9 @@
                         },
                         type: "logarithmic"
                     }]
+                },
+                legend: {
+                    display: false,
                 },
                 plugins: {
                     zoom: {

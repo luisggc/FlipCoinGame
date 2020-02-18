@@ -67,6 +67,7 @@ function apostar() {
         alert("O saldo final de um dos jogadore é maior que 1 milhão, portanto pode haver adaptação do visual\nValor final foi cerca de: " + n + " milhões")
     }
     jogo["saldo_geral"] = ultimo_saldos
+    jogo["cada_jogada"] = y_array
     updateGraph(x, y_array)
 
     return quantidade_acontecimentos_adicionais
@@ -129,17 +130,29 @@ color_border = [
 ]
 
 function updateGraph(x, y_array) {
+
+    datasets = y_array.map((y_value, index) =>
+    ({
+        label: jogo.quantidade_de_jogadores < 11 ? 'Jogador ' + (index + 1) : "",
+        data: y_value,
+        borderWidth: 1,
+        pointRadius: 0,
+        borderColor: color_border[index],
+        backgroundColor: jogo.quantidade_de_jogadores == 1 ? "#ffea99" : "transparent"
+    }))
+
     myChart.data = {
         labels: x,
-        datasets: y_array.map((y_value, index) =>
-            ({
-                label: jogo.quantidade_de_jogadores < 11 ? 'Jogador ' + (index + 1) : "",
-                data: y_value,
+        datasets: [
+            {
+                label: "Saldo inicial",
+                data: y_array[0].map(_ => y_array[0][0]),
                 borderWidth: 1,
                 pointRadius: 0,
-                borderColor: color_border[index],
-                backgroundColor: jogo.quantidade_de_jogadores == 1 ? "#ffea99" : "transparent"
-            }))
+                borderColor: "#ff3420"
+            },
+            ...datasets
+        ]
     }
     myChart.update()
 }
@@ -178,34 +191,37 @@ function atualizarVisual() {
     saldo_texto = document.getElementById("label_jogador1")
     saldo_raw_texto = document.getElementById("saldo_raw_texto")
 
-    if (jogo["saldo_geral"].length<7){
-        saldo_texto.innerHTML = "Saldo"
-        visual_elemento_do_saldo.innerHTML = jogo["saldo_geral"].map((saldo, index) => (
-            `${index+1}.<div class="odometer custom_odometer" id="saldo_do_jogador${index}">${saldo}</div><br>`
-        )).join("\n")
-            
-        jogo["saldo_geral"].map((saldo, index) => {
-            var el = document.getElementById(`saldo_do_jogador${index}`);
-            var new_odo = new Odometer({
-                el: el
-            });
-            $(`#saldo_do_jogador${index}`).html(saldo)
-        })
-    }else{
-        saldo_texto.innerHTML = ""
-        visual_elemento_do_saldo.innerHTML = ""
-        texto_do_raw_texto = jogo["saldo_geral"].map((saldo, index) => (
-            `<div>Jogador ${index+1}: ${saldo}</div>`
-        )).join("")
+    if(("cada_jogada" in jogo)){
+        if (jogo["saldo_geral"].length<7){
+            saldo_texto.innerHTML = "Saldo"
+            visual_elemento_do_saldo.innerHTML = jogo.cada_jogada.map((saldo, index) => {
+                saldo_final = Math.floor(saldo[saldo.length-2])
+                return (
+                `${index+1}.<div class="odometer custom_odometer" id="saldo_do_jogador${index}">${saldo_final}</div><br>`
+            )}).join("\n")
+                
+            jogo.cada_jogada.map((saldo, index) => {
+                var el = document.getElementById(`saldo_do_jogador${index}`);
+                var new_odo = new Odometer({
+                    el: el
+                });
+                $(`#saldo_do_jogador${index}`).html(Math.floor(saldo[saldo.length-2]))
+            })
+        }else{
+            saldo_texto.innerHTML = ""
+            visual_elemento_do_saldo.innerHTML = ""
+                texto_do_raw_texto = jogo.cada_jogada.map((saldo, index) => (
+                    `<div>Jogador ${index+1}: ${Math.floor(saldo[saldo.length-2])} (saldo máx: ${Math.floor(Math.max(...saldo))})</div>`
+                )).join("")
 
-        saldo_raw_texto.innerHTML = `</br></br>Saldo final dos jogadores:</br></br>${texto_do_raw_texto}`
-
+                saldo_raw_texto.innerHTML = `</br></br>Saldo final dos jogadores:</br></br>${texto_do_raw_texto}`
+        }
     }
 
     //document.getElementById("saldo1").value = jogo.saldo_geral[0]
     
     for (let id in jogo) {
-        if (jogo.hasOwnProperty(id) && id != "inner" && id!='saldo_geral') {
+        if (jogo.hasOwnProperty(id) && id != "inner" && id!='saldo_geral' && id!='cada_jogada') {
             console.log(id)
             document.getElementById(id).value = jogo[id]
         }
