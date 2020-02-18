@@ -174,29 +174,29 @@
         $('#configuracoes').modal('show')
 
         var jogo = {
-            saldo_geral: [100],
-            ganho: 60,
-            perda: 40,
-            acontecimentos_nao_acontecimentos: "",
-            lances: 100,
-            probabilidade_cara: 48,
-            probabilidade_coroa: 52,
-            quantidade_de_jogadores: 1,
-            saldo1: 100
-        }
-/*
+                saldo_geral: [100],
+                ganho: 60,
+                perda: 40,
+                acontecimentos_nao_acontecimentos: "",
+                lances: 100,
+                probabilidade_cara: 48,
+                probabilidade_coroa: 52,
+                quantidade_de_jogadores: 1,
+                saldo1: 100
+            }
+            /*
 
-        var el = document.querySelector('.odometer');
-        od = new Odometer({
-            el: el,
-            format: '(,ddd).dd',
-            duration: 1000
-        });
-        window.odometerOptions = {
-            format: '(,ddd).dd',
-            duration: 1000
-        };
-        */
+                    var el = document.querySelector('.odometer');
+                    od = new Odometer({
+                        el: el,
+                        format: '(,ddd).dd',
+                        duration: 1000
+                    });
+                    window.odometerOptions = {
+                        format: '(,ddd).dd',
+                        duration: 1000
+                    };
+                    */
 
         atualizarVisual()
 
@@ -213,12 +213,13 @@
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
-                        }
+                            beginAtZero: true,
+                        },
+                        type: "logarithmic"
                     }]
                 },
                 plugins: {
-                    zoom:{
+                    zoom: {
                         // Container for zoom options
                         zoom: {
                             // Boolean to enable zooming
